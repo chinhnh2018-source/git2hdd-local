@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>git2hdd — Web GUI Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background blobs for Liquid Glass theme -->
+  <div class="liquid-background">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+
+  <div class="app-container">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="logo">💾</span>
+        <div class="brand-text">
+          <h2>git<span>2</span>hdd</h2>
+          <p>Windows Backup Tool</p>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-btn active" data-tab="dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </button>
+        <button class="nav-btn" data-tab="projects">
+          <span class="nav-icon">📁</span> Dự án
+        </button>
+        <button class="nav-btn" data-tab="settings">
+          <span class="nav-icon">⚙️</span> Cấu hình dự án
+        </button>
+        <button class="nav-btn" data-tab="execute">
+          <span class="nav-icon">⚡</span> Chạy Backup / Mirror
+        </button>
+        <button class="nav-btn" data-tab="logs">
+          <span class="nav-icon">📋</span> Lịch sử hoạt động
+        </button>
+        <button class="nav-btn" data-tab="theme-settings">
+          <span class="nav-icon">🎨</span> Cài đặt giao diện
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p>Phiên bản v1.0.0</p>
+        <span class="badge badge-platform">Windows</span>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      
+      <!-- HEADER -->
+      <header class="app-header">
+        <div class="header-title">
+          <h1 id="page-title">Tổng quan hệ thống</h1>
+          <p id="page-subtitle" class="text-muted">Kiểm tra trạng thái và lịch sử hoạt động.</p>
+        </div>
+
+        <div class="header-right-controls">
+          <div class="project-selector">
+            <label for="project-select">Dự án:</label>
+            <select id="project-select">
+              <option value="cwd">Thư mục hiện tại</option>
+            </select>
+          </div>
+          <div class="system-status">
+            <div class="status-item" id="status-git">
+              <span class="status-dot"></span>
+              Git: <span class="status-label">Đang kiểm tra...</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ALERT MESSAGE CONTAINER -->
+      <div id="alert-container"></div>
+
+      <!-- TAB: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-pane active">
+        <div class="dashboard-grid">
+          
+          <div class="card card-hero">
+            <h3>Tự động hóa Git Backup sang nhiều HDD</h3>
+            <p>Giải pháp sao lưu dự phòng đáng tin cậy. Dễ dàng quản lý lịch sử Git và đồng bộ hóa thư mục dự án.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="switchTab('execute')">⚡ Chạy Backup ngay</button>
+            </div>
+          </div>
+
+          <div class="card card-info">
+            <h4>Thư mục nguồn (SSD SSD_Repo)</h4>
+            <div class="path-display" id="dash-source-path">Chưa cấu hình</div>
+            <p class="text-muted text-small">Đây là thư mục SSD làm việc chính chứa mã nguồn dự án của bạn.</p>
+          </div>
+
+          <div class="card">
+            <h4>HDD Backup Targets (Bare Git Repos)</h4>
+            <ul class="target-list" id="dash-git-targets">
+              <li class="empty-placeholder">Chưa có HDD backup nào được cấu hình</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- QUICK OPERATION GUIDE -->
+        <div class="card card-guide mt-4">
+          <h4>💡 Hướng dẫn vận hành nhanh (Quick Guide)</h4>
+          <div class="guide-steps">
+            <div class="g-step">
+              <span class="g-num">1</span>
+              <div>
+                <strong>Khởi tạo</strong>
+                <p>Đảm bảo đã chạy lệnh <code>git2hdd init</code> tại thư mục dự án.</p>
+              </div>
+            </div>
+            <div class="g-step">
+              <span class="g-num">2</span>
+              <div>
+                <strong>Cấu hình</strong>
+                <p>Thêm các thư mục HDD backup và HDD mirror tại tab <strong>Cấu hình dự án</strong>.</p>
+              </div>
+            </div>
+            <div class="g-step">
+              <span class="g-num">3</span>
+              <div>
+                <strong>Đăng ký Remote</strong>
+                <p>Sau khi thêm HDD Backup mới, chạy lệnh <code>git2hdd add-remotes</code> tại terminal một lần.</p>
+              </div>
+            </div>
+            <div class="g-step">
+              <span class="g-num">4</span>
+              <div>
+                <strong>Vận hành</strong>
+                <p>Chọn tab <strong>Chạy Backup / Mirror</strong> để thực thi và giám sát tiến trình trực quan.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="card mt-4">
+          <div class="card-header-flex">
+            <h4>Lịch sử backup gần đây</h4>
+            <button class="btn btn-link btn-small" onclick="switchTab('logs')">Xem tất cả ➜</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Hành động</th>
+                  <th>Mô tả / Chi tiết</th>
+                  <th>Kết quả</th>
+                </tr>
+              </thead>
+              <tbody id="dash-recent-logs">
+                <tr>
+                  <td colspan="4" class="text-center text-muted">Không có bản ghi log nào</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: EXECUTE -->
+      <section id="tab-execute" class="tab-pane">
+        
+        <div class="card card-exec-body">
+          <h4>💾 Thực thi Git Backup (Hàng ngày)</h4>
+          <p class="form-desc text-muted mt-2">Thực hiện: <code>git add .</code> ➜ <code>git commit</code> ➜ <code>git push</code> đến tất cả các ổ cứng HDD đã được cài đặt.</p>
+          <!-- Backup Form -->
+          <div id="exec-form-backup" class="exec-form active" style="margin-top: 1.5rem;">
+            <div class="form-group">
+              <label for="backup-message">Commit Message (Thông điệp commit)</label>
+              <input type="text" id="backup-message" placeholder="Ví dụ: hoàn thành tính năng giỏ hàng (để trống sẽ tự động điền timestamp)">
+              <p class="field-help text-muted">Mô tả ngắn gọn những thay đổi của bạn để tiện tra cứu lịch sử backup.</p>
+            </div>
+            <div class="form-row">
+              <div class="form-group-checkbox">
+                <input type="checkbox" id="backup-dryrun">
+                <label for="backup-dryrun">Xem trước (Dry Run) — Chỉ in ra các câu lệnh, không ghi dữ liệu thật</label>
+              </div>
+            </div>
+            <button class="btn btn-success" id="btn-run-backup">🚀 Bắt đầu Git Backup</button>
+          </div>
+        </div>
+
+        <!-- LIVE TERMINAL CONSOLE -->
+        <div class="card card-terminal mt-4">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="terminal-title">Bảng hiển thị tiến trình (Real-time Highlight Stream)</span>
+            <button class="btn btn-terminal-clear" id="btn-clear-terminal">Xóa màn hình</button>
+          </div>
+          <div class="terminal-body" id="terminal-body">
+            <div class="terminal-placeholder">Ấn bắt đầu chạy để hiển thị log...</div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TAB: PROJECTS -->
+      <section id="tab-projects" class="tab-pane">
+        <div class="card">
+          <h4>➕ Thêm dự án mới</h4>
+          <p class="text-muted text-small mt-2">Đăng ký một thư mục dự án (source repo trên SSD) để quản lý backup riêng cho từng dự án.</p>
+          <div class="form-group mt-4">
+            <label for="new-project-path">Đường dẫn thư mục nguồn (Source Path) <span class="required">*</span></label>
+            <input type="text" id="new-project-path" placeholder="D:\work\my-project">
+            <p class="field-help text-muted">Đường dẫn tuyệt đối tới thư mục làm việc chính trên SSD của dự án.</p>
+          </div>
+          <button type="button" class="btn btn-success" id="btn-add-project">+ Thêm dự án</button>
+        </div>
+
+        <div class="card mt-4">
+          <h4>📂 Danh sách dự án đang quản lý</h4>
+          <p class="text-muted text-small mt-2">Chọn một dự án để thao tác, hoặc gỡ khỏi danh sách quản lý (không xóa dữ liệu thật trên đĩa).</p>
+          <ul class="project-list mt-4" id="project-list">
+            <li class="empty-placeholder">Đang tải danh sách dự án...</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- TAB: SETTINGS -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="settings-grid">
+          
+          <!-- LEFT COLUMN: Main Config Form -->
+          <div class="card">
+            <h4>Chỉnh sửa cấu hình git2hdd.config.json</h4>
+            <form id="settings-form" class="mt-4">
+              
+              <div class="form-group">
+                <label for="setting-source-path">Thư mục nguồn dự án (Source Path SSD) <span class="required">*</span></label>
+                <input type="text" id="setting-source-path" required placeholder="D:\work\my-project">
+                <p class="field-help text-muted">Đường dẫn tuyệt đối đến thư mục làm việc chính trên SSD của bạn.</p>
+              </div>
+
+              <div class="form-group">
+                <label>Danh sách HDD Backup (Git Bare Repositories) — Tối đa 10</label>
+                <div id="targets-input-list" class="dynamic-list"></div>
+                <button type="button" class="btn btn-secondary btn-small" id="btn-add-target">+ Thêm HDD Backup</button>
+                <p class="field-help text-muted">Đường dẫn đến các bare repository trên HDD dùng để push dự phòng (thường kết thúc bằng <code>.git</code>).</p>
+              </div>
+
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="setting-default-branch">Nhánh mặc định (Default Branch)</label>
+                  <input type="text" id="setting-default-branch" placeholder="main">
+                  <p class="field-help text-small text-muted">Nhánh Git chính dùng để đồng bộ (thường là <code>main</code> hoặc <code>master</code>).</p>
+                </div>
+                <div class="form-group">
+                  <label for="setting-remote-prefix">Tiền tố tên remote (Git Remote Prefix)</label>
+                  <input type="text" id="setting-remote-prefix" placeholder="hdd">
+                  <p class="field-help text-small text-muted">Tên các remote Git được đặt tự động. Mặc định là <code>hdd</code> (tạo thành <code>hdd1</code>, <code>hdd2</code>...).</p>
+                </div>
+              </div>
+
+              <div class="form-actions mt-4">
+                <button type="submit" class="btn btn-success">💾 Lưu cấu hình</button>
+                <button type="button" class="btn btn-secondary" id="btn-reset-settings">🔄 Hoàn tác</button>
+              </div>
+
+            </form>
+          </div>
+
+          <!-- RIGHT COLUMN: Tasks Scheduler & Drives Scanning -->
+          <div class="settings-sidebar">
+            
+            <!-- Daily Scheduler Widget -->
+            <div class="card">
+              <h4>📅 Lên lịch backup tự động</h4>
+              <p class="text-muted text-small">Sử dụng Windows Task Scheduler để chạy lệnh backup tự động hàng ngày.</p>
+              
+              <div class="form-group mt-4">
+                <label for="schedule-time">Thời gian chạy hàng ngày</label>
+                <input type="text" id="schedule-time" placeholder="Ví dụ: 22:00" style="width: 100%;">
+                <div id="schedule-status-text" class="field-help text-muted" style="margin-top: 6px;">Đang kiểm tra lịch chạy...</div>
+              </div>
+
+              <div class="form-actions mt-4" style="gap: 8px;">
+                <button type="button" class="btn btn-primary btn-small" id="btn-save-schedule" style="width:100%;">⏰ Lưu lịch chạy</button>
+                <button type="button" class="btn btn-danger btn-small" id="btn-delete-schedule" style="width:100%; display:none;">🗑️ Hủy lịch chạy</button>
+              </div>
+            </div>
+
+            <!-- Detected Drives Panel -->
+            <div class="card mt-4">
+              <div class="card-header-flex">
+                <h4>🔍 Ổ cứng hiện tại</h4>
+                <button type="button" class="btn btn-secondary btn-small" id="btn-refresh-drives" style="padding: 4px 8px;">🔄 Quét</button>
+              </div>
+              <p class="text-muted text-small mt-2">Nhấp chọn để thêm nhanh đường dẫn backup hoặc mirror tương ứng của dự án vào form.</p>
+              
+              <div class="drives-list mt-4" id="drives-list">
+                <div class="empty-placeholder">Đang quét ổ đĩa...</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- TAB: LOGS -->
+      <section id="tab-logs" class="tab-pane">
+        <div class="card">
+          <div class="card-header-flex">
+            <h4>Lịch sử hoạt động chi tiết</h4>
+            <div class="filter-controls">
+              <label for="log-limit">Hiển thị:</label>
+              <select id="log-limit">
+                <option value="20">20 bản ghi gần nhất</option>
+                <option value="50" selected>50 bản ghi gần nhất</option>
+                <option value="100">100 bản ghi gần nhất</option>
+                <option value="500">500 bản ghi gần nhất</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-container mt-4">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Hành động</th>
+                  <th>Mục tiêu (Targets)</th>
+                  <th>Kết quả chi tiết</th>
+                </tr>
+              </thead>
+              <tbody id="logs-table-body">
+                <tr>
+                  <td colspan="4" class="text-center text-muted">Đang tải lịch sử...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: THEME SETTINGS -->
+      <section id="tab-theme-settings" class="tab-pane">
+        <div class="card" style="max-width: 600px;">
+          <h4>🎨 Cài đặt giao diện & Bố cục</h4>
+          <p class="text-muted text-small mt-2">Tùy chỉnh phong cách hiển thị và cách sắp xếp menu của bảng điều khiển.</p>
+          
+          <div class="form-group mt-4">
+            <label for="theme-select">Giao diện màu sắc</label>
+            <select id="theme-select" style="width: 100%;">
+              <option value="theme-default">Dark Space (Mặc định)</option>
+              <option value="theme-classic">Classic Minimal (Cũ)</option>
+              <option value="theme-liquid-glass">Liquid Glass (Kính lỏng)</option>
+              <option value="theme-cyber-neon">Cyber Neon (Neon tương lai)</option>
+              <!-- 10 theme mới -->
+              <option value="theme-solarized-light">Solarized Light (Sáng dịu mắt)</option>
+              <option value="theme-solarized-dark">Solarized Dark (Tối dịu mắt)</option>
+              <option value="theme-nord">Nordic Frost (Băng tuyết Bắc Âu)</option>
+              <option value="theme-sunset">Sunset Horizon (Hoàng hôn ấm)</option>
+              <option value="theme-forest">Forest Moss (Rừng rêu xanh)</option>
+              <option value="theme-grayscale">Mù màu hoàn toàn (Đen trắng / Grayscale)</option>
+              <option value="theme-deuteranopia">Mù màu xanh lục (Deuteranopia Safe)</option>
+              <option value="theme-protanopia">Mù màu đỏ (Protanopia Safe)</option>
+              <option value="theme-tritanopia">Mù màu xanh lam - vàng (Tritanopia Safe)</option>
+              <option value="theme-high-contrast">Tương phản cao (High Contrast Dark)</option>
+            </select>
+            <p class="field-help text-muted">Thay đổi bảng màu chủ đạo và hiệu ứng chuyển động của trang.</p>
+          </div>
+
+          <div class="form-group mt-4">
+            <label for="sidebar-select">Vị trí cột menu bên</label>
+            <select id="sidebar-select" style="width: 100%;">
+              <option value="left">Bên trái (Mặc định)</option>
+              <option value="right">Bên phải</option>
+            </select>
+            <p class="field-help text-muted">Điều hướng cột menu bên sang trái hoặc phải màn hình.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
