@@ -1,7 +1,7 @@
 /**
  * log.js — Command handler cho `git2hdd log`
  *
- * Hiển thị lịch sử các lần backup/mirror gần nhất.
+ * Hiển thị lịch sử các lần backup gần nhất.
  */
 
 import chalk from 'chalk'

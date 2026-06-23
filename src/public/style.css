@@ -808,11 +808,6 @@ input[type="text"]:focus, select:focus {
   color: var(--primary);
 }
 
-.badge-action-mirror {
-  background-color: rgba(188, 140, 255, 0.15);
-  color: #c9a0ff;
-}
-
 .badge-status-success {
   background-color: rgba(63, 185, 80, 0.15);
   color: var(--success);

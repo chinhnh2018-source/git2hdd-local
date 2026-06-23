@@ -1,7 +1,7 @@
 /**
  * LogService.js — Ghi và đọc lịch sử thao tác git2hdd
  *
- * Mỗi lần chạy lệnh backup/mirror được ghi vào git2hdd.log
+ * Mỗi lần chạy lệnh backup được ghi vào git2hdd.log
  * dưới dạng JSON Lines (mỗi dòng là một JSON object).
  */
 
@@ -13,8 +13,8 @@ const MAX_LOG_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
 /**
  * @typedef {Object} LogEntry
  * @property {string}                          timestamp - ISO 8601
- * @property {'backup'|'mirror'}               command   - Lệnh đã thực thi
- * @property {string[]}                        targets   - Danh sách remote hoặc mirrorTarget
+ * @property {'backup'}                        command   - Lệnh đã thực thi
+ * @property {string[]}                        targets   - Danh sách remote
  * @property {Record<string, 'success'|'failed'>} results - Kết quả từng target
  * @property {string}                          [message] - Commit message (backup only)
  */

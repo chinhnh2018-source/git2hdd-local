@@ -84,7 +84,7 @@ function switchTab(tabId) {
       break
     case 'logs':
       pageTitle.textContent = 'Lịch sử hoạt động'
-      pageSubtitle.textContent = 'Xem chi tiết nhật ký thực thi backup/mirror.'
+      pageSubtitle.textContent = 'Xem chi tiết nhật ký thực thi backup.'
       break
     case 'theme-settings':
       pageTitle.textContent = 'Cài đặt giao diện'
