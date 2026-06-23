@@ -376,12 +376,18 @@ async function addNewProject() {
     const data = await res.json()
     if (data.success) {
       input.value = ''
-      showAlert(`Đã thêm dự án: ${data.project.name}`)
       if (data.project && data.project.id) {
         appState.currentProjectId = data.project.id
         localStorage.setItem('git2hdd-current-project', data.project.id)
       }
       await loadAllData()
+      // Tiếp tục luồng: đưa người dùng sang tab Cấu hình để thêm HDD backup rồi Lưu
+      switchTab('settings')
+      if (data.warning) {
+        showAlert(data.warning, 'danger')
+      } else {
+        showAlert(`Đã thêm dự án "${data.project.name}". Hãy thêm các HDD backup bên dưới rồi bấm "Lưu cấu hình".`)
+      }
     } else {
       showAlert(`Thêm dự án thất bại: ${(data.errors || []).join(', ')}`, 'danger')
     }
@@ -421,7 +427,17 @@ function initSettingsForm() {
 
 function populateSettingsForm() {
   const cfg = appState.config
-  if (!cfg) return
+  if (!cfg) {
+    // Dự án mới chưa có config — vẫn điền sẵn đường dẫn nguồn từ dự án đang chọn
+    const proj = appState.projects.find(p => p.id === appState.currentProjectId)
+    document.getElementById('setting-source-path').value = proj ? proj.path : ''
+    document.getElementById('setting-default-branch').value = 'main'
+    document.getElementById('setting-remote-prefix').value = 'hdd'
+    const targetsContainer = document.getElementById('targets-input-list')
+    targetsContainer.innerHTML = ''
+    addTargetInput('', 'targets-input-list')
+    return
+  }
 
   document.getElementById('setting-source-path').value = cfg.sourcePath || ''
   document.getElementById('setting-default-branch').value = cfg.defaultBranch || 'main'

@@ -15,12 +15,13 @@
  */
 
 import express from 'express'
+import fs from 'fs'
 import path from 'path'
 import http from 'http'
 import { fileURLToPath } from 'url'
 import { spawn } from 'child_process'
 import { checkGit, detectDrives } from './SystemChecker.js'
-import { loadConfig, saveConfig, validate } from './ConfigService.js'
+import { loadConfig, saveConfig, validate, createDefault } from './ConfigService.js'
 import { readLog } from './LogService.js'
 import { getProjectIdentifier, queryTask, createTask, deleteTask } from './ScheduleService.js'
 import { listProjects, getProject, addProject, removeProject } from './ProjectRegistry.js'
@@ -114,9 +115,41 @@ export function startServer(port, host = '127.0.0.1') {
         return res.status(400).json({ success: false, errors: ['Thiếu đường dẫn dự án (path).'] })
       }
 
+      const normalized = projectPath.trim().replace(/[\\/]+$/, '')
+
+      // Kiểm tra thư mục có tồn tại không (phản hồi rõ ràng thay vì âm thầm thêm path sai)
       try {
-        const project = await addProject(projectPath)
-        res.json({ success: true, project })
+        const stat = await fs.promises.stat(normalized)
+        if (!stat.isDirectory()) {
+          return res.status(400).json({ success: false, errors: [`"${normalized}" không phải là thư mục.`] })
+        }
+      } catch {
+        return res.status(400).json({ success: false, errors: [`Thư mục "${normalized}" không tồn tại.`] })
+      }
+
+      try {
+        const project = await addProject(normalized)
+
+        // Nếu dự án chưa có config → tạo config mặc định để dashboard/settings có dữ liệu đi theo
+        let config = null
+        try {
+          config = await loadConfig(normalized)
+        } catch {
+          config = createDefault(normalized)
+          try {
+            await saveConfig(normalized, config)
+          } catch (writeErr) {
+            // Không ghi được config (vd: không có quyền) — vẫn trả project, kèm cảnh báo
+            return res.json({
+              success: true,
+              project,
+              config,
+              warning: `Đã thêm dự án nhưng không tạo được file config: ${writeErr.message}`,
+            })
+          }
+        }
+
+        res.json({ success: true, project, config })
       } catch (err) {
         res.status(500).json({ success: false, errors: [err.message] })
       }
@@ -183,7 +216,11 @@ export function startServer(port, host = '127.0.0.1') {
 
         // 1. Khởi tạo thư mục và bare git repo cho targets
         const { ensureDir } = await import('../utils/pathUtils.js')
-        const { initBare, addOrUpdateRemote, generateRemoteNames } = await import('./GitService.js')
+        const { init, initBare, addOrUpdateRemote, generateRemoteNames } = await import('./GitService.js')
+
+        // Đảm bảo thư mục nguồn tồn tại và là một git repo (init idempotent)
+        await ensureDir(sourcePath)
+        await init(sourcePath)
 
         for (const target of targets) {
           await ensureDir(target)
