@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git2HDD — Hướng dẫn sử dụng chi tiết</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --accent3: #d29922;
+      --accent4: #f78166;
+      --accent5: #bc8cff;
+      --code-bg: #0d1117;
+      --shadow: rgba(0,0,0,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    /* ─── Header ─── */
+    header {
+      background: linear-gradient(135deg, #1a1e2e 0%, #0d1117 50%, #0a1628 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 20px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(88,166,255,0.06) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(63,185,80,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    header h1 {
+      font-size: 2.8em;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    header h1 .icon { font-size: 1.1em; }
+    header h1 .highlight { color: var(--accent); }
+    header p.subtitle {
+      font-size: 1.15em;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* ─── Nav / TOC ─── */
+    nav.toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 900px;
+      margin: -30px auto 40px;
+      padding: 28px 32px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+    nav.toc h2 {
+      font-size: 1.1em;
+      color: var(--accent);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    nav.toc ol {
+      columns: 2;
+      column-gap: 30px;
+      padding-left: 20px;
+    }
+    nav.toc li {
+      margin-bottom: 6px;
+      break-inside: avoid;
+    }
+    nav.toc a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95em;
+      transition: color 0.2s;
+    }
+    nav.toc a:hover { color: var(--accent); }
+
+    /* ─── Main container ─── */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ─── Sections ─── */
+    section {
+      margin-bottom: 50px;
+    }
+    section > h2 {
+      font-size: 1.7em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    section > h2 .emoji { font-size: 1.1em; }
+
+    h3 {
+      font-size: 1.25em;
+      font-weight: 600;
+      margin: 28px 0 12px;
+      color: var(--accent2);
+    }
+    h4 {
+      font-size: 1.05em;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: var(--accent5);
+    }
+
+    p { margin-bottom: 14px; }
+
+    /* ─── Code blocks ─── */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      margin: 14px 0 20px;
+      font-size: 0.9em;
+      line-height: 1.6;
+      position: relative;
+    }
+    pre code {
+      font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+      color: var(--text);
+    }
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+      background: var(--surface2);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: var(--accent);
+    }
+    pre code {
+      background: none;
+      padding: 0;
+    }
+
+    /* Syntax highlighting */
+    .kw { color: #ff7b72; }
+    .str { color: #a5d6ff; }
+    .cmt { color: #8b949e; font-style: italic; }
+    .fn { color: #d2a8ff; }
+    .flag { color: #79c0ff; }
+    .path { color: #7ee787; }
+    .opt { color: #ffa657; }
+    .val { color: #a5d6ff; }
+    .prompt { color: #8b949e; user-select: none; }
+    .out { color: #3fb950; }
+    .warn { color: #d29922; }
+    .err { color: #f78166; }
+
+    /* ─── Info boxes ─── */
+    .info-box {
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0 20px;
+      border-left: 4px solid;
+      font-size: 0.95em;
+    }
+    .info-box.tip {
+      background: rgba(63,185,80,0.08);
+      border-color: var(--accent2);
+    }
+    .info-box.warning {
+      background: rgba(210,153,34,0.08);
+      border-color: var(--accent3);
+    }
+    .info-box.danger {
+      background: rgba(247,129,102,0.08);
+      border-color: var(--accent4);
+    }
+    .info-box.info {
+      background: rgba(88,166,255,0.08);
+      border-color: var(--accent);
+    }
+    .info-box strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* ─── Tables ─── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 20px;
+      font-size: 0.92em;
+    }
+    th, td {
+      padding: 10px 14px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface);
+      color: var(--accent);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    tr:nth-child(even) { background: rgba(255,255,255,0.015); }
+
+    /* ─── Workflow diagram ─── */
+    .workflow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 20px 0 30px;
+      justify-content: center;
+      align-items: center;
+    }
+    .workflow .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: center;
+      min-width: 140px;
+      flex: 1;
+      max-width: 200px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .workflow .step:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 16px rgba(88,166,255,0.15);
+    }
+    .workflow .step .num {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.85em;
+      margin-bottom: 8px;
+    }
+    .workflow .step .label {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .workflow .step .cmd {
+      font-family: monospace;
+      font-size: 0.82em;
+      color: var(--accent);
+      margin-top: 6px;
+      word-break: break-all;
+    }
+    .workflow .arrow {
+      font-size: 1.5em;
+      color: var(--accent2);
+      flex-shrink: 0;
+    }
+
+    /* ─── Architecture diagram ─── */
+    .arch-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      margin: 20px 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+    .arch-diagram pre {
+      background: none;
+      border: none;
+      text-align: left;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+      font-size: 0.82em;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    /* ─── File tree ─── */
+    .file-tree {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin: 14px 0 20px;
+      font-family: monospace;
+      font-size: 0.88em;
+      line-height: 1.7;
+    }
+    .file-tree .dir { color: var(--accent); font-weight: 600; }
+    .file-tree .file { color: var(--text-muted); }
+    .file-tree .desc { color: #6e7681; font-style: italic; }
+
+    /* ─── Lists ─── */
+    ul, ol {
+      padding-left: 24px;
+      margin-bottom: 14px;
+    }
+    li { margin-bottom: 6px; }
+    li code { font-size: 0.85em; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 700px) {
+      header { padding: 40px 16px 36px; }
+      header h1 { font-size: 2em; }
+      nav.toc { margin: -20px 12px 30px; padding: 20px; }
+      nav.toc ol { columns: 1; }
+      .container { padding: 0 12px 60px; }
+      .workflow { flex-direction: column; align-items: stretch; }
+      .workflow .step { max-width: 100%; }
+      .workflow .arrow { transform: rotate(90deg); align-self: center; }
+    }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ─── Smooth scroll ─── */
+    html { scroll-behavior: smooth; }
+
+    /* ─── Copy button ─── */
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.78em;
+      opacity: 0;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    pre:hover .copy-btn { opacity: 1; }
+    .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .copy-btn.copied { color: var(--accent2); border-color: var(--accent2); }
+
+    /* ─── Phase badge ─── */
+    .phase-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.78em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+    .phase-badge.once { background: rgba(88,166,255,0.15); color: var(--accent); }
+    .phase-badge.daily { background: rgba(63,185,80,0.15); color: var(--accent2); }
+    .phase-badge.manage { background: rgba(188,140,255,0.15); color: var(--accent5); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HEADER ═══════════════════════════════════════════════════════ -->
+<header>
+  <h1><span class="icon">💾</span> git<span class="highlight">2</span>hdd</h1>
+  <p class="subtitle">Tự động hóa Git backup từ SSD sang nhiều HDD trên Windows — thay thế hoàn toàn các file <code>.bat</code> rời rạc bằng một CLI tool thống nhất.</p>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════ TOC ═══════════════════════════════════════════════════════ -->
+<nav class="toc">
+  <h2>📑 Mục lục</h2>
+  <ol>
+    <li><a href="#overview">Tổng quan & Cách vận hành</a></li>
+    <li><a href="#requirements">Yêu cầu hệ thống</a></li>
+    <li><a href="#install">Cài đặt</a></li>
+    <li><a href="#workflow">Quy trình sử dụng</a></li>
+    <li><a href="#cmd-init">Lệnh <code>init</code></a></li>
+    <li><a href="#cmd-setup-remotes">Lệnh <code>setup-remotes</code></a></li>
+    <li><a href="#cmd-add-remotes">Lệnh <code>add-remotes</code></a></li>
+    <li><a href="#cmd-backup">Lệnh <code>backup</code></a></li>
+    <li><a href="#cmd-config">Lệnh <code>config</code></a></li>
+    <li><a href="#cmd-log">Lệnh <code>log</code></a></li>
+    <li><a href="#config-file">File cấu hình</a></li>
+    <li><a href="#architecture">Kiến trúc hệ thống</a></li>
+    <li><a href="#exit-codes">Exit codes</a></li>
+    <li><a href="#troubleshooting">Xử lý sự cố</a></li>
+    <li><a href="#examples">Ví dụ thực tế</a></li>
+  </ol>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════ 1. OVERVIEW ═══════════════════════════════════════════════ -->
+<section id="overview">
+  <h2><span class="emoji">🔍</span> Tổng quan & Cách vận hành</h2>
+
+  <p><strong>git2hdd</strong> giải quyết bài toán: <em>"Làm sao backup dự án từ SSD sang nhiều HDD một cách tự động, đáng tin cậy?"</em></p>
+
+  <p>Thay vì duy trì nhiều file <code>.bat</code> rời rạc (mỗi HDD một file), git2hdd gộp tất cả vào một CLI tool duy nhất với 2 chế độ backup:</p>
+
+  <h3>Chế độ 1: Git Backup <span class="phase-badge daily">Hàng ngày</span></h3>
+  <p>Sử dụng Git để backup toàn bộ lịch sử commit. Quy trình:</p>
+  <div class="workflow">
+    <div class="step">
+      <div class="num">1</div>
+      <strong>git add .</strong>
+      <div class="label">Stage tất cả thay đổi</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="num">2</div>
+      <strong>git commit</strong>
+      <div class="label">Tạo commit mới</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="num">3</div>
+      <strong>git push</strong>
+      <div class="label">Push đến tất cả HDD</div>
+    </div>
+  </div>
+
+  <div class="info-box tip">
+    <strong>💡 Ưu điểm Git Backup</strong>
+    Lưu được toàn bộ lịch sử commit, dễ dàng rollback, mỗi HDD là một bare repo độc lập — nếu 1 HDD hỏng, các HDD khác vẫn còn dữ liệu.
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════ 2. REQUIREMENTS ═══════════════════════════════════════════════ -->
+<section id="requirements">
+  <h2><span class="emoji">⚙️</span> Yêu cầu hệ thống</h2>
+  <table>
+    <tr>
+      <th>Yêu cầu</th>
+      <th>Phiên bản</th>
+      <th>Ghi chú</th>
+    </tr>
+    <tr>
+      <td><strong>Hệ điều hành</strong></td>
+      <td>Windows 10+</td>
+      <td>Cảnh báo nếu chạy trên OS khác</td>
+    </tr>
+    <tr>
+      <td><strong>Node.js</strong></td>
+      <td>≥ 16.0.0</td>
+      <td>Kiểm tra tự động khi chạy</td>
+    </tr>
+    <tr>
+      <td><strong>Git for Windows</strong></td>
+      <td>Bất kỳ</td>
+      <td><a href="https://git-scm.com/download/win" style="color:var(--accent)">Tải tại đây</a></td>
+    </tr>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 3. INSTALL ═══════════════════════════════════════════════ -->
+<section id="install">
+  <h2><span class="emoji">📦</span> Cài đặt</h2>
+
+  <h3>Cách 1: Cài đặt toàn cục (khuyến nghị)</h3>
+  <pre><code><span class="prompt">$</span> npm install -g git2hdd</code></pre>
+  <p>Sau đó sử dụng trực tiếp từ bất kỳ đâu:</p>
+  <pre><code><span class="prompt">$</span> git2hdd <span class="flag">--version</span>
+<span class="out">1.0.0</span></code></pre>
+
+  <h3>Cách 2: Chạy trực tiếp từ source</h3>
+  <pre><code><span class="prompt">$</span> git clone https://github.com/git2hdd/git2hdd.git
+<span class="prompt">$</span> cd git2hdd
+<span class="prompt">$</span> npm install
+<span class="prompt">$</span> node bin/git2hdd.js <span class="flag">--version</span></code></pre>
+
+  <h3>Kiểm tra cài đặt</h3>
+  <pre><code><span class="prompt">$</span> git2hdd <span class="flag">--help</span>
+<span class="out">Tự động hóa Git backup từ SSD sang nhiều HDD trên Windows</span>
+<span class="out"></span>
+<span class="out">Options:</span>
+<span class="out">  -v, --version   Hiển thị phiên bản hiện tại</span>
+<span class="out">  -h, --help      Hiển thị trợ giúp</span>
+<span class="out"></span>
+<span class="out">Commands:</span>
+<span class="out">  init            Khởi tạo Git repository và tạo file git2hdd.config.json</span>
+<span class="out">  setup-remotes   Tạo bare Git repositories trên các HDD đích</span>
+<span class="out">  add-remotes     Thêm các HDD làm Git remote vào Source_Repo</span>
+<span class="out">  backup          git add . → git commit → git push đến tất cả HDD</span>
+<span class="out">  config          Xem và chỉnh sửa cấu hình git2hdd.config.json</span>
+<span class="out">  log             Xem lịch sử các lần backup/mirror</span></code></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 4. WORKFLOW ═══════════════════════════════════════════════ -->
+<section id="workflow">
+  <h2><span class="emoji">🔄</span> Quy trình sử dụng</h2>
+
+  <h3>Phase 1 — Setup lần đầu <span class="phase-badge once">Chạy 1 lần</span></h3>
+  <div class="workflow">
+    <div class="step">
+      <div class="num">1</div>
+      <strong>git2hdd init</strong>
+      <div class="label">Khởi tạo Git repo</div>
+      <div class="cmd">--source D:\work\project</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="num">2</div>
+      <strong>setup-remotes</strong>
+      <div class="label">Tạo bare repos trên HDD</div>
+      <div class="cmd">--targets E:\backup\... F:\backup\...</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="num">3</div>
+      <strong>add-remotes</strong>
+      <div class="label">Thêm HDD làm Git remote</div>
+    </div>
+  </div>
+
+  <h3>Phase 2 — Sử dụng hàng ngày <span class="phase-badge daily">Lặp lại</span></h3>
+  <div class="workflow">
+    <div class="step">
+      <div class="num">1</div>
+      <strong>git2hdd backup</strong>
+      <div class="label">Commit + Push sang HDD</div>
+      <div class="cmd">--message "mô tả"</div>
+    </div>
+  </div>
+
+  <h3>Phase 3 — Quản lý <span class="phase-badge manage">Khi cần</span></h3>
+  <div class="workflow">
+    <div class="step">
+      <div class="num">1</div>
+      <strong>git2hdd config</strong>
+      <div class="label">Xem/sửa cấu hình</div>
+      <div class="cmd">--show / --set / --reset</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="step">
+      <div class="num">2</div>
+      <strong>git2hdd log</strong>
+      <div class="label">Xem lịch sử backup</div>
+      <div class="cmd">--lines 50</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 5. INIT ═══════════════════════════════════════════════ -->
+<section id="cmd-init">
+  <h2><span class="emoji">🚀</span> Lệnh <code>init</code> <span class="phase-badge once">Chạy 1 lần</span></h2>
+
+  <p>Khởi tạo Git repository tại thư mục nguồn và tạo file cấu hình <code>git2hdd.config.json</code>.</p>
+
+  <h3>Cú pháp</h3>
+  <pre><code><span class="prompt">$</span> git2hdd init <span class="flag">--source</span> <span class="path"><đường_dẫn></span></code></pre>
+
+  <h3>Tham số</h3>
+  <table>
+    <tr>
+      <th>Tham số</th>
+      <th>Bắt buộc</th>
+      <th>Mô tả</th>
+    </tr>
+    <tr>
+      <td><code>--source <path></code></td>
+      <td>Không</td>
+      <td>Đường dẫn thư mục nguồn. Mặc định: thư mục hiện tại</td>
+    </tr>
+  </table>
+
+  <h3>Chi tiết hoạt động</h3>
+  <ol>
+    <li>Kiểm tra Git đã được cài đặt chưa</li>
+    <li>Kiểm tra đường dẫn source có tồn tại không</li>
+    <li>Chạy <code>git init</code> tại thư mục source (nếu chưa có <code>.git</code>)</li>
+    <li>Tạo file <code>git2hdd.config.json</code> với cấu hình mặc định</li>
+    <li>Hiển thị gợi ý chạy <code>setup-remotes</code> tiếp theo</li>
+  </ol>
+
+  <h3>Ví dụ</h3>
+  <pre><code><span class="cmt"># Chỉ định thư mục nguồn</span>
+<span class="prompt">$</span> git2hdd init <span class="flag">--source</span> <span class="path">D:\work\my-project</span>
+
+<span class="out">✓ Đã khởi tạo Git repository tại D:\work\my-project</span>
+<span class="out">✓ Đã tạo file git2hdd.config.json</span>
+<span class="out"></span>
+<span class="out">Bước tiếp theo: git2hdd setup-remotes --targets E:\backup\my-project.git</span>
+
+<span class="cmt"># Hoặc dùng thư mục hiện tại</span>
+<span class="prompt">$</span> cd D:\work\my-project
+<span class="prompt">$</span> git2hdd init</code></pre>
+
+  <div class="info-box warning">
+    <strong>⚠️ Lưu ý</strong>
+    Nếu thư mục đã có <code>.git</code>, lệnh sẽ bỏ qua bước <code>git init</code> và chỉ tạo file config. Nếu file config đã tồn tại, bạn sẽ được hỏi có muốn ghi đè không.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 6. SETUP-REMOTES ═══════════════════════════════════════════════ -->
+<section id="cmd-setup-remotes">
+  <h2><span class="emoji">🗄️</span> Lệnh <code>setup-remotes</code> <span class="phase-badge once">Chạy 1 lần</span></h2>
+
+  <p>Tạo các bare Git repositories trên các HDD đích. Bare repo là repo không có working directory — chỉ chứa dữ liệu Git, phù hợp làm remote backup.</p>
+
+  <h3>Cú pháp</h3>
+  <pre><code><span class="prompt">$</span> git2hdd setup-remotes <span class="flag">--targets</span> <span class="path"><path1></span> <span class="path"><path2></span> <span class="path">...</span></code></pre>
+
+  <h3>Tham số</h3>
+  <table>
+    <tr>
+      <th>Tham số</th>
+      <th>Bắt buộc</th>
+      <th>Mô tả</th>
+    </tr>
+    <tr>
+      <td><code>--targets <paths...></code></td>
+      <td><strong>Có</strong></td>
+      <td>Danh sách đường dẫn HDD đích (1–10 đường dẫn). Nên kết thúc bằng <code>.git</code></td>
+    </tr>
+  </table>
+
+  <h3>Chi tiết hoạt động</h3>
+  <ol>
+    <li>Đọc file <code>git2hdd.config.json</code> để lấy cấu hình</li>
+    <li>Với mỗi target:
+      <ul>
+        <li>Tạo thư mục nếu chưa tồn tại</li>
+        <li>Chạy <code>git init --bare</code></li>
+      </ul>
+    </li>
+    <li>Cập nhật danh sách <code>targets</code> trong config</li>
+  </ol>
+
+  <h3>Ví dụ</h3>
+  <pre><code><span class="cmt"># Tạo bare repo trên 3 HDD</span>
+<span class="prompt">$</span> git2hdd setup-remotes <span class="flag">--targets</span> \
+    <span class="path">E:\backup\my-project.git</span> \
+    <span class="path">F:\backup\my-project.git</span> \
+    <span class="path">G:\backup\my-project.git</span>
+
+<span class="out">✓ Đã tạo bare repo tại E:\backup\my-project.git</span>
+<span class="out">✓ Đã tạo bare repo tại F:\backup\my-project.git</span>
+<span class="out">✓ Đã tạo bare repo tại G:\backup\my-project.git</span>
+<span class="out">✓ Đã cập nhật git2hdd.config.json</span></code></pre>
+
+  <div class="info-box tip">
+    <strong>💡 Mẹo</strong>
+    Nên đặt tên thư mục kết thúc bằng <code>.git</code> (ví dụ: <code>E:\backup\my-project.git</code>) theo quy ước của Git bare repository.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 7. ADD-REMOTES ═══════════════════════════════════════════════ -->
+<section id="cmd-add-remotes">
+  <h2><span class="emoji">🔗</span> Lệnh <code>add-remotes</code> <span class="phase-badge once">Chạy 1 lần</span></h2>
+
+  <p>Thêm các HDD đã setup làm Git remote vào source repository. Mỗi HDD sẽ được đặt tên tự động: <code>hdd1</code>, <code>hdd2</code>, <code>hdd3</code>,...</p>
+
+  <h3>Cú pháp</h3>
+  <pre><code><span class="prompt">$</span> git2hdd add-remotes</code></pre>
+
+  <h3>Chi tiết hoạt động</h3>
+  <ol>
+    <li>Đọc danh sách <code>targets</code> từ config</li>
+    <li>Đọc tiền tố remote từ config (<code>remotePrefix</code>, mặc định: <code>hdd</code>)</li>
+    <li>Với mỗi target:
+      <ul>
+        <li>Nếu remote chưa tồn tại → <code>git remote add hdd1 <path></code></li>
+        <li>Nếu remote đã tồn tại → <code>git remote set-url hdd1 <path></code></li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>Ví dụ</h3>
+  <pre><code><span class="prompt">$</span> git2hdd add-remotes
+
+<span class="out">✓ Đã thêm remote hdd1 → E:\backup\my-project.git</span>
+<span class="out">✓ Đã thêm remote hdd2 → F:\backup\my-project.git</span>
+<span class="out">✓ Đã thêm remote hdd3 → G:\backup\my-project.git</span>
+
+<span class="cmt"># Kiểm tra kết quả</span>
+<span class="prompt">$</span> git remote -v
+<span class="out">hdd1    E:\backup\my-project.git (fetch)</span>
+<span class="out">hdd1    E:\backup\my-project.git (push)</span>
+<span class="out">hdd2    F:\backup\my-project.git (fetch)</span>
+<span class="out">hdd2    F:\backup\my-project.git (push)</span>
+<span class="out">hdd3    G:\backup\my-project.git (fetch)</span>
+<span class="out">hdd3    G:\backup\my-project.git (push)</span></code></pre>
+
+  <div class="info-box info">
+    <strong>ℹ️ An toàn khi chạy lại</strong>
+    Nếu remote đã tồn tại, lệnh sẽ cập nhật URL thay vì báo lỗi. Bạn có thể chạy lại lệnh này bất kỳ lúc nào.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 8. BACKUP ═══════════════════════════════════════════════ -->
+<section id="cmd-backup">
+  <h2><span class="emoji">💾</span> Lệnh <code>backup</code> <span class="phase-badge daily">Hàng ngày</span></h2>
+
+  <p>Lệnh UN] Sẽ thực hiện:</span>
+<span class="warn">  1. git add .</span>
+<span class="warn">  2. git commit -m "Backup 2026-06-02 14:30:00"</span>
+<span class="warn">  3. git push hdd1 main</span>
+<span class="warn">  4. git push hdd2 main</span>
+<span class="warn">  5. git push hdd3 main</span></code></pre>
+
+  <div class="info-box warning">
+    <strong>⚠️ Xử lý partial failure</strong>
+    Nếu một HDD push thất bại (ví dụ: HDD không kết nối), các HDD khác vẫn tiếp tục backup. Lệnh sẽ thoát với exit code 8 và hiển thị HDD nào thất bại.
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════ 10. CONFIG ═══════════════════════════════════════════════ -->
+<section id="cmd-config">
+  <h2><span class="emoji">⚙️</span> Lệnh <code>config</code> <span class="phase-badge manage">Quản lý</span></h2>
+
+  <p>Xem, cập nhật, hoặc reset file cấu hình <code>git2hdd.config.json</code>.</p>
+
+  <h3>Cú pháp</h3>
+  <pre><code><span class="prompt">$</span> git2hdd config <span class="flag">--show</span>
+<span class="prompt">$</span> git2hdd config <span class="flag">--set</span> <span class="str"><key></span> <span class="flag">--value</span> <span class="str"><value></span>
+<span class="prompt">$</span> git2hdd config <span class="flag">--reset</span></code></pre>
+
+  <h3>Tham số</h3>
+  <table>
+    <tr>
+      <th>Tham số</th>
+      <th>Mô tả</th>
+    </tr>
+    <tr>
+      <td><code>--show</code></td>
+      <td>Hiển thị cấu hình hiện tại (mặc định nếu không có flag nào)</td>
+    </tr>
+    <tr>
+      <td><code>--set <key></code></td>
+      <td>Tên trường cần cập nhật (hỗ trợ dot-notation)</td>
+    </tr>
+    <tr>
+      <td><code>--value <value></code></td>
+      <td>Giá trị mới (dùng với <code>--set</code>)</td>
+    </tr>
+    <tr>
+      <td><code>--reset</code></td>
+      <td>Reset toàn bộ cấu hình về mặc định</td>
+    </tr>
+  </table>
+
+  <h3>Ví dụ</h3>
+  <pre><code><span class="cmt"># Xem cấu hình hiện tại</span>
+<span class="prompt">$</span> git2hdd config <span class="flag">--show</span>
+
+<span class="out">{</span>
+<span class="out">  "sourcePath": "D:\\work\\my-project",</span>
+<span class="out">  "targets": [</span>
+<span class="out">    "E:\\backup\\my-project.git",</span>
+<span class="out">    "F:\\backup\\my-project.git"</span>
+<span class="out">  ],</span>
+<span class="out">  "defaultBranch": "main",</span>
+<span class="out">  "remotePrefix": "hdd"</span>
+<span class="out">}</span>
+
+<span class="cmt"># Đổi branch mặc định</span>
+<span class="prompt">$</span> git2hdd config <span class="flag">--set</span> defaultBranch <span class="flag">--value</span> master
+
+<span class="cmt"># Reset về mặc định</span>
+<span class="prompt">$</span> git2hdd config <span class="flag">--reset</span></code></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 11. LOG ═══════════════════════════════════════════════ -->
+<section id="cmd-log">
+  <h2><span class="emoji">📋</span> Lệnh <code>log</code> <span class="phase-badge manage">Quản lý</span></h2>
+
+  <p>Xem lịch sử các lần backup và mirror. Dữ liệu được lưu ở định dạng JSON Lines (<code>git2hdd.log</code>).</p>
+
+  <h3>Cú pháp</h3>
+  <pre><code><span class="prompt">$</span> git2hdd log
+<span class="prompt">$</span> git2hdd log <span class="flag">--lines</span> <span class="val">50</span></code></pre>
+
+  <h3>Tham số</h3>
+  <table>
+    <tr>
+      <th>Tham số</th>
+      <th>Mặc định</th>
+      <th>Mô tả</th>
+    </tr>
+    <tr>
+      <td><code>-n, --lines <number></code></td>
+      <td>20</td>
+      <td>Số bản ghi gần nhất cần hiển thị</td>
+    </tr>
+  </table>
+
+  <h3>Ví dụ</h3>
+  <pre><code><span class="prompt">$</span> git2hdd log
+
+<span class="out">📋 Lịch sử backup (10 bản ghi gần nhất)</span>
+<span class="out"></span>
+<span class="out">┌─────────────────────┬─────────┬──────────────────────────────┐</span>
+<span class="out">│ Thời gian           │ Loại    │ Kết quả                      │</span>
+<span class="out">├─────────────────────┼─────────┼──────────────────────────────┤</span>
+<span class="out">│ 2026-06-02 14:30:00 │ backup  │ 3/3 HDD ✅                   │</span>
+<span class="out">│ 2026-06-01 18:00:00 │ backup  │ 2/3 HDD ⚠️ (hdd3 failed)    │</span>
+<span class="out">│ 2026-06-01 12:00:00 │ backup  │ 3/3 HDD ✅                   │</span>
+<span class="out">└─────────────────────┴─────────┴──────────────────────────────┘</span>
+
+<span class="cmt"># Xem 50 bản ghi</span>
+<span class="prompt">$</span> git2hdd log <span class="flag">--lines</span> <span class="val">50</span></code></pre>
+
+  <div class="info-box info">
+    <strong>ℹ️ Log rotation</strong>
+    File log tự động giới hạn ở 500 entries. Khi vượt quá, các entry cũ nhất sẽ bị xóa để giữ file không quá lớn.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 12. CONFIG FILE ═══════════════════════════════════════════════ -->
+<section id="config-file">
+  <h2><span class="emoji">📄</span> File cấu hình <code>git2hdd.config.json</code></h2>
+
+  <p>File này được tạo tự động bởi lệnh <code>init</code> và nằm tại thư mục gốc của dự án.</p>
+
+  <h3>Cấu trúc đầy đủ</h3>
+  <pre><code>{
+  <span class="str">"sourcePath"</span>: <span class="val">"D:\\work\\my-project"</span>,
+  <span class="str">"targets"</span>: [
+    <span class="val">"E:\\backup\\my-project.git"</span>,
+    <span class="val">"F:\\backup\\my-project.git"</span>,
+    <span class="val">"G:\\backup\\my-project.git"</span>
+  ],
+  <span class="str">"defaultBranch"</span>: <span class="val">"main"</span>,
+  <span class="str">"remotePrefix"</span>: <span class="val">"hdd"</span>
+}</code></pre>
+
+  <h3>Giải thích từng trường</h3>
+  <table>
+    <tr>
+      <th>Trường</th>
+      <th>Kiểu</th>
+      <th>Bắt buộc</th>
+      <th>Mô tả</th>
+    </tr>
+    <tr>
+      <td><code>sourcePath</code></td>
+      <td>string</td>
+      <td>✅</td>
+      <td>Đường dẫn tuyệt đối đến thư mục dự án trên SSD</td>
+    </tr>
+    <tr>
+      <td><code>targets</code></td>
+      <td>string[]</td>
+      <td>✅</td>
+      <td>Danh sách đường dẫn bare repo trên các HDD (cho Git backup)</td>
+    </tr>
+
+    <tr>
+      <td><code>defaultBranch</code></td>
+      <td>string</td>
+      <td>Không</td>
+      <td>Branch mặc định để push. Mặc định: <code>"main"</code></td>
+    </tr>
+    <tr>
+      <td><code>remotePrefix</code></td>
+      <td>string</td>
+      <td>Không</td>
+      <td>Tiền tố đặt tên remote. Mặc định: <code>"hdd"</code> → <code>hdd1</code>, <code>hdd2</code>,...</td>
+    </tr>
+  </table>
+
+  <div class="info-box tip">
+    <strong>💡 Config được lưu ở đâu?</strong>
+    File <code>git2hdd.config.json</code> nằm trong thư mục hiện tại khi bạn chạy lệnh <code>init</code>. Hãy đảm bảo chạy các lệnh tiếp theo từ cùng thư mục hoặc chỉ định đúng <code>--source</code>.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 13. ARCHITECTURE ═══════════════════════════════════════════════ -->
+<section id="architecture">
+  <h2><span class="emoji">🏗️</span> Kiến trúc hệ thống</h2>
+
+  <h3>Cấu trúc thư mục</h3>
+  <div class="file-tree">
+    <span class="dir">git2hdd/</span><br>
+    ├── <span class="file">bin/git2hdd.js</span> <span class="desc">← CLI entry point (Commander.js)</span><br>
+    ├── <span class="file">git2hdd.config.json</span> <span class="desc">← Cấu hình dự án (tự tạo)</span><br>
+    ├── <span class="file">git2hdd.log</span> <span class="desc">← Lịch sử backup (tự tạo)</span><br>
+    ├── <span class="dir">src/</span><br>
+    │   ├── <span class="dir">commands/</span> <span class="desc">← 6 command handlers</span><br>
+    │   │   ├── <span class="file">init.js</span><br>
+    │   │   ├── <span class="file">setup-remotes.js</span><br>
+    │   │   ├── <span class="file">add-remotes.js</span><br>
+    │   │   ├── <span class="file">backup.js</span><br>
+    │   │   ├── <span class="file">config.js</span><br>
+    │   │   └── <span class="file">log.js</span><br>
+    │   ├── <span class="dir">core/</span> <span class="desc">← Core services</span><br>
+    │   │   ├── <span class="file">ConfigService.js</span> <span class="desc">← Quản lý config (load/save/validate)</span><br>
+    │   │   ├── <span class="file">GitService.js</span> <span class="desc">← Wrapper cho Git CLI</span><br>
+    │   │   ├── <span class="file">LogService.js</span> <span class="desc">← Ghi/đọc log JSON Lines</span><br>
+    │   │   └── <span class="file">SystemChecker.js</span> <span class="desc">← Kiểm tra Node.js version & OS</span><br>
+    │   └── <span class="dir">utils/</span> <span class="desc">← Tiện ích</span><br>
+    │       ├── <span class="file">errorHandler.js</span> <span class="desc">← Xử lý lỗi thống nhất</span><br>
+    │       ├── <span class="file">formatter.js</span> <span class="desc">← Format output (tables, colors)</span><br>
+    │       └── <span class="file">pathUtils.js</span> <span class="desc">← Kiểm tra đường dẫn</span><br>
+    └── <span class="dir">test/</span> <span class="desc">← Unit & property-based tests</span>
+  </div>
+
+  <h3>Luồng dữ liệu</h3>
+  <div class="arch-diagram">
+    <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                        <span style="color:var(--accent)">CLI Entry Point</span>                         │
+│                     bin/git2hdd.js (Commander)                  │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │
+                    ┌───────────┴───────────┐
+                    ▼                       ▼
+            ┌──────────┐             ┌──────────┐
+            │  init    │             │  backup  │  ...
+            │  command │             │  command │
+            └────┬─────┘             └────┬─────┘
+                 │                        │
+        ┌────────┴────────────────────────┼───────────────────────┐
+        ▼                                ▼                       ▼
+┌──────────────┐              ┌──────────────────┐      ┌───────────────────┐
+│ ConfigService│              │    GitService    │      │    LogService     │
+│ (load/save/  │              │ (init/commit/    │      │ (JSON Lines log)  │
+│  validate)   │              │  push/remote)    │      │                   │
+└──────┬───────┘              └────────┬─────────┘      └────────┬──────────┘
+       │                               │                         │
+       ▼                               ▼                         ▼
+┌──────────────┐              ┌──────────────────┐      ┌───────────────────┐
+│  git2hdd.    │              │   Git CLI        │      │   git2hdd.log     │
+│  config.json │              │   (child_process)│      │                   │
+└──────────────┘              └──────────────────┘      └───────────────────┘
+    </pre>
+  </div>
+
+  <h3>Dependencies</h3>
+  <table>
+    <tr>
+      <th>Package</th>
+      <th>Vai trò</th>
+    </tr>
+    <tr>
+      <td><code>commander</code></td>
+      <td>Parse CLI arguments, tạo help text</td>
+    </tr>
+    <tr>
+      <td><code>chalk</code></td>
+      <td>Colorized terminal output</td>
+    </tr>
+    <tr>
+      <td><code>ora</code></td>
+      <td>Spinner/loading indicators</td>
+    </tr>
+    <tr>
+      <td><code>cli-table3</code></td>
+      <td>Hiển thị bảng kết quả trong terminal</td>
+    </tr>
+    <tr>
+      <td><code>semver</code></td>
+      <td>Kiểm tra Node.js version</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 14. EXIT CODES ═══════════════════════════════════════════════ -->
+<section id="exit-codes">
+  <h2><span class="emoji">🚨</span> Exit codes</h2>
+
+  <p>git2hdd sử dụng exit codes chi tiết để giúp bạn xác định loại lỗi khi chạy tự động (ví dụ: trong cron job hoặc CI):</p>
+
+  <table>
+    <tr>
+      <th>Code</th>
+      <th>Ý nghĩa</th>
+      <th>Khi nào xảy ra</th>
+    </tr>
+    <tr>
+      <td><code>0</code></td>
+      <td style="color:var(--accent2)">Thành công hoàn toàn</td>
+      <td>Tất cả thao tác đều OK</td>
+    </tr>
+    <tr>
+      <td><code>1</code></td>
+      <td style="color:var(--accent4)">Lỗi chung</td>
+      <td>Lỗi không xác định</td>
+    </tr>
+    <tr>
+      <td><code>2</code></td>
+      <td style="color:var(--accent4)">Lỗi cấu hình</td>
+      <td>Config không tìm thấy hoặc không hợp lệ</td>
+    </tr>
+    <tr>
+      <td><code>3</code></td>
+      <td style="color:var(--accent4)">Thiếu phụ thuộc</td>
+      <td>Git không tìm thấy</td>
+    </tr>
+    <tr>
+      <td><code>4</code></td>
+      <td style="color:var(--accent4)">Đường dẫn không tồn tại</td>
+      <td>Source path hoặc target path không hợp lệ</td>
+    </tr>
+    <tr>
+      <td><code>5</code></td>
+      <td style="color:var(--accent4)">Lỗi Git</td>
+      <td>git init/commit/push thất bại</td>
+    </tr>
+
+    <tr>
+      <td><code>7</code></td>
+      <td style="color:var(--accent3)">Node.js version quá cũ</td>
+      <td>Node.js < 16.0.0</td>
+    </tr>
+    <tr>
+      <td><code>8</code></td>
+      <td style="color:var(--accent3)">Partial failure</td>
+      <td>Ít nhất 1 HDD thất bại, nhưng các HDD khác OK</td>
+    </tr>
+  </table>
+
+  <div class="info-box info">
+    <strong>ℹ️ Sử dụng exit code trong script</strong>
+    <pre><code><span class="cmt">REM Kiểm tra kết quả trong batch script</span>
+git2hdd backup
+<span class="kw">IF</span> %ERRORLEVEL% <span class="kw">EQU</span> 0 <span class="kw">ECHO</span> <span class="out">Backup thành công!</span>
+<span class="kw">IF</span> %ERRORLEVEL% <span class="kw">EQU</span> 8 <span class="kw">ECHO</span> <span class="warn">Có HDD bị lỗi, kiểm tra lại!</span></code></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 15. TROUBLESHOOTING ═══════════════════════════════════════════════ -->
+<section id="troubleshooting">
+  <h2><span class="emoji">🔧</span> Xử lý sự cố</h2>
+
+  <h3>Lỗi thường gặp</h3>
+
+  <h4>❌ "git: command not found" hoặc exit code 3</h4>
+  <p>Git chưa được cài hoặc không nằm trong PATH.</p>
+  <pre><code><span class="cmt"># Kiểm tra Git</span>
+<span class="prompt">$</span> git <span class="flag">--version</span>
+
+<span class="cmt"># Nếu chưa có, tải tại: https://git-scm.com/download/win</span>
+<span class="cmt"># Khi cài, đảm bảo chọn "Add Git to PATH"</span></code></pre>
+
+  <h4>❌ "Config not found" hoặc exit code 2</h4>
+  <p>File <code>git2hdd.config.json</code> không tồn tại.</p>
+  <pre><code><span class="cmt"># Chạy init trước</span>
+<span class="prompt">$</span> git2hdd init <span class="flag">--source</span> <span class="path">D:\work\my-project</span></code></pre>
+
+  <h4>❌ "Path does not exist" hoặc exit code 4</h4>
+  <p>Đường dẫn source hoặc target không tồn tại.</p>
+  <pre><code><span class="cmt"># Kiểm tra đường dẫn trong config</span>
+<span class="prompt">$</span> git2hdd config <span class="flag">--show</span>
+
+<span class="cmt"># Đảm bảo tất cả HDD đã được mount</span>
+<span class="prompt">$</span> <span class="fn">dir</span> <span class="path">E:\backup\</span></code></pre>
+
+  <h4>❌ Push thất bại (exit code 8)</h4>
+  <p>Một hoặc nhiều HDD không thể push. Kiểm tra:</p>
+  <ul>
+    <li>HDD có được kết nối không?</li>
+    <li>Bare repo có tồn tại không? (chạy lại <code>setup-remotes</code>)</li>
+    <li>Remote có đúng URL không? (chạy lại <code>add-remotes</code>)</li>
+  </ul>
+  <pre><code><span class="cmt"># Kiểm tra remote URLs</span>
+<span class="prompt">$</span> git remote -v
+
+<span class="cmt"># Thử push thủ công để xem lỗi chi tiết</span>
+<span class="prompt">$</span> git push hdd1 main <span class="flag">--verbose</span></code></pre>
+
+
+  <h3>Debug mode</h3>
+  <p>Để xem chi tiết hơn, bạn có thể kiểm tra log:</p>
+  <pre><code><span class="cmt"># Xem log gần nhất</span>
+<span class="prompt">$</span> git2hdd log <span class="flag">--lines</span> <span class="val">5</span>
+
+<span class="cmt"># Hoặc đọc file log trực tiếp</span>
+<span class="prompt">$</span> type git2hdd.log</code></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════════ 16. EXAMPLES ═══════════════════════════════════════════════ -->
+<section id="examples">
+  <h2><span class="emoji">💡</span> Ví dụ thực tế</h2>
+
+  <h3>Ví dụ 1: Dự án web thông thường</h3>
+  <pre><code><span class="cmt"># 1. Setup (chạy 1 lần)</span>
+<span class="prompt">$</span> cd D:\work\my-web-app
+<span class="prompt">$</span> git2hdd init
+<span class="prompt">$</span> git2hdd setup-remotes <span class="flag">--targets</span> <span class="path">E:\backup\my-web-app.git</span> <span class="path">F:\backup\my-web-app.git</span>
+<span class="prompt">$</span> git2hdd add-remotes
+
+<span class="cmt"># 2. Sử dụng hàng ngày</span>
+<span class="prompt">$</span> git2hdd backup <span class="flag">-m</span> <span class="str">"xong feature cart"</span></code></pre>
+
+  <h3>Ví dụ 2: Backup game project lớn</h3>
+  <pre><code><span class="cmt"># Setup với nhiều HDD</span>
+<span class="prompt">$</span> git2hdd init <span class="flag">--source</span> <span class="path">D:\Games\MyGame</span>
+<span class="prompt">$</span> git2hdd setup-remotes <span class="flag">--targets</span> \
+    <span class="path">E:\backup\MyGame.git</span> \
+    <span class="path">F:\backup\MyGame.git</span> \
+    <span class="path">G:\backup\MyGame.git</span> \
+    <span class="path">H:\backup\MyGame.git</span>
+<span class="prompt">$</span> git2hdd add-remotes
+
+<span class="cmt"># Backup cuối ngày</span>
+<span class="prompt">$</span> git2hdd backup <span class="flag">-m</span> <span class="str">"Day 42: added boss fight"</span></code></pre>
+
+  <h3>Ví dụ 3: Sử dụng trong Task Scheduler (Windows)</h3>
+  <pre><code><span class="cmt">@echo off</span>
+<span class="cmt">REM daily-backup.bat — Chạy hàng ngày qua Task Scheduler</span>
+
+<span class="kw">cd</span> <span class="path">D:\work\my-project</span>
+
+<span class="cmt">REM Git backup</span>
+git2hdd backup
+<span class="kw">IF</span> %ERRORLEVEL% <span class="kw">NEQ</span> 0 (
+    <span class="kw">ECHO</span> <span class="err">Backup failed with code %ERRORLEVEL%</span>
+    <span class="cmt">REM Gửi thông báo hoặc ghi log lỗi</span>
+)
+</code></pre>
+
+  <h3>Ví dụ 4: Kiểm tra trạng thái & giám sát</h3>
+  <pre><code><span class="cmt"># Xem cấu hình hiện tại</span>
+<span class="prompt">$</span> git2hdd config <span class="flag">--show</span>
+
+<span class="cmt"># Xem 10 lần backup gần nhất</span>
+<span class="prompt">$</span> git2hdd log <span class="flag">--lines</span> <span class="val">10</span>
+
+<span class="cmt"># Kiểm tra remote nào đang được cấu hình</span>
+<span class="prompt">$</span> git remote -v</code></pre>
+</section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ FOOTER ═══════════════════════════════════════════════ -->
+<footer style="text-align:center; padding:40px 20px; border-top:1px solid var(--border); color:var(--text-muted); font-size:0.9em;">
+  <p>💾 <strong>git2hdd</strong> v1.0.0 — Tự động hóa Git backup từ SSD sang nhiều HDD trên Windows</p>
+  <p style="margin-top:8px;">
+    <a href="https://github.com/git2hdd/git2hdd" style="color:var(--accent); text-decoration:none;">GitHub</a>
+    &nbsp;•&nbsp;
+    <span>License: MIT</span>
+    &nbsp;•&nbsp;
+    <span>Made with ❤️ by git2hdd contributors</span>
+  </p>
+</footer>
+
+<script>
+  // Copy button functionality
+  document.querySelectorAll('pre').forEach(pre => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', () => {
+      const code = pre.querySelector('code');
+      const text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+    pre.style.position = 'relative';
+    pre.appendChild(btn);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hướng dẫn sử dụng Git2HDD cho người mới bắt đầu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #151d30;
+      --surface-hover: #1e2942;
+      --border: rgba(88, 166, 255, 0.15);
+      --primary: #4792ff;
+      --success: #3fb950;
+      --warning: #d29922;
+      --danger: #f78166;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --shadow: rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(120deg, #ffffff 0%, #a2c4f2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .intro-badge {
+      display: inline-block;
+      background-color: rgba(71, 146, 255, 0.15);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── SECTION CARDS ─── */
+    section {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+
+    section h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    section h2 .icon {
+      background-color: rgba(255, 255, 255, 0.05);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin-bottom: 16px;
+    }
+
+    /* ─── LISTS ─── */
+    ol, ul {
+      padding-left: 24px;
+      margin-bottom: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    li strong {
+      color: #fff;
+    }
+
+    /* ─── CODE & PRE ─── */
+    code {
+      font-family: 'Fira Code', monospace;
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: var(--primary);
+    }
+
+    pre {
+      background-color: #06090f;
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: #cbd5e1;
+    }
+
+    /* ─── INFO BOXES ─── */
+    .info-box {
+      border-left: 4px solid var(--primary);
+      background-color: rgba(71, 146, 255, 0.08);
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+
+    .info-box strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .info-box.success {
+      border-left-color: var(--success);
+      background-color: rgba(63, 185, 80, 0.08);
+    }
+
+    .info-box.warning {
+      border-left-color: var(--warning);
+      background-color: rgba(210, 153, 34, 0.08);
+    }
+
+    /* ─── STEPS TIMELINE ─── */
+    .step-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .step-item {
+      position: relative;
+      padding-left: 50px;
+      margin-bottom: 30px;
+    }
+
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-number {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 36px;
+      height: 36px;
+      background-color: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(71, 146, 255, 0.4);
+    }
+
+    .step-content h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 30px 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #79b1ff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="intro-badge">Dành cho người mới bắt đầu</div>
+      <h1>Hướng Dẫn Sử Dụng Git2HDD</h1>
+      <p>Cách sao lưu dự án từ SSD sang nhiều HDD dự phòng tự động trên Windows</p>
+    </header>
+
+    <!-- SECTION 1: TỔNG QUAN -->
+    <section>
+      <h2><span class="icon">🔍</span> Git2HDD là gì?</h2>
+      <p>Khi làm việc, bạn thường viết code trên ổ cứng tốc độ cao (SSD). Để đề phòng ổ SSD bị hỏng hoặc mất dữ liệu, bạn muốn copy dự án sang 2-3 ổ cứng thông thường (HDD) khác để dự phòng.</p>
+      <p>Thay vì mỗi ngày phải tự sao chép thủ công từng thư mục hoặc mở từng file script phức tạp, <strong>Git2HDD</strong> cung cấp cho bạn một công cụ tự động. Bạn chỉ cần nhấn một nút trên giao diện web, công cụ sẽ tự động nén, đồng bộ và đẩy dữ liệu sang tất cả các ổ cứng HDD cùng một lúc.</p>
+    </section>
+
+    <!-- SECTION 2: CHUẨN BỊ -->
+    <section>
+      <h2><span class="icon">🛠️</span> Bước chuẩn bị (Chỉ cần làm 1 lần duy nhất)</h2>
+      <p>Trước khi sử dụng, máy tính của bạn cần cài đặt 2 phần mềm nền tảng sau:</p>
+      
+      <ol>
+        <li>
+          <strong>Cài đặt Node.js:</strong>
+          <p class="text-muted">Node.js giúp chạy các công cụ viết bằng Javascript trên máy tính.</p>
+          <ul>
+            <li>Truy cập trang chủ <a href="https://nodejs.org/" target="_blank">nodejs.org</a>.</li>
+            <li>Tải phiên bản <strong>LTS</strong> (khuyên dùng vì tính ổn định).</li>
+            <li>Mở file tải về và nhấn <strong>Next</strong> liên tục để cài đặt.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Cài đặt Git:</strong>
+          <p class="text-muted">Git là phần mềm giúp quản lý các phiên bản và lịch sử thay đổi của dự án.</p>
+          <ul>
+            <li>Truy cập <a href="https://git-scm.com/download/win" target="_blank">git-scm.com</a> để tải bản cài đặt cho Windows.</li>
+            <li>Mở file cài đặt, giữ nguyên các lựa chọn mặc định và nhấn <strong>Next</strong> để hoàn thành.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="info-box warning">
+        <strong>💡 Lưu ý quan trọng khi cài đặt:</strong>
+        Sau khi cài xong cả Node.js và Git, bạn hãy **khởi động lại máy tính** để hệ thống Windows ghi nhận đường dẫn của các phần mềm này.
+      </div>
+    </section>
+
+    <!-- SECTION 3: CÀI ĐẶT CÔNG CỤ -->
+    <section>
+      <h2><span class="icon">📦</span> Cách cài đặt Git2HDD</h2>
+      <p>Để cài đặt Git2HDD, bạn làm theo các bước sau:</p>
+      
+      <div class="step-list">
+        
+        <div class="step-item">
+          <span class="step-number">1</span>
+          <div class="step-content">
+            <h3>Mở công cụ Command Prompt (hoặc PowerShell)</h3>
+            <p>Nhấn phím <code>Windows + R</code> trên bàn phím, gõ chữ <code>cmd</code> rồi nhấn <code>Enter</code>. Một cửa sổ màn hình đen sẽ hiện ra.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <span class="step-number">2</span>
+          <div class="step-content">
+            <h3>Nhập lệnh cài đặt</h3>
+            <p>Copy dòng lệnh dưới đây, dán vào cửa sổ Command Prompt rồi nhấn <code>Enter</code>:</p>
+            <pre><code>npm install -g git2hdd</code></pre>
+            <p class="text-muted">Hệ thống sẽ tải và cài đặt Git2HDD tự động trong khoảng 5-10 giây.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <span class="step-number">3</span>
+          <div class="step-content">
+            <h3>Kiểm tra cài đặt thành công</h3>
+            <p>Nhập lệnh sau và nhấn <code>Enter</code>:</p>
+            <pre><code>git2hdd --version</code></pre>
+            <p>Nếu màn hình hiển thị số phiên bản (Ví dụ: <code>1.0.0</code>) thì bạn đã cài đặt thành công!</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: HƯỚNG DẪN SỬ DỤNG QUA WEB -->
+    <section>
+      <h2><span class="icon">💻</span> Quy trình sử dụng bằng Giao diện Web (Khuyên dùng)</h2>
+      <p>Cách dễ dàng nhất để cấu hình và sử dụng là mở giao diện đồ họa trực quan trên trình duyệt:</p>
+
+      <div class="step-list">
+        
+        <div class="step-item">
+          <span class="step-number">1</span>
+          <div class="step-content">
+            <h3>Di chuyển đến thư mục dự án của bạn</h3>
+            <p>Trên cửa sổ Command Prompt, di chuyển đến thư mục chứa code của bạn bằng lệnh <code>cd</code>. Ví dụ:</p>
+            <pre><code>cd D:\work\my-project</code></pre>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <span class="step-number">2</span>
+          <div class="step-content">
+            <h3>Khởi tạo dự án</h3>
+            <p>Nhập lệnh khởi tạo dự án đầu tiên:</p>
+            <pre><code>git2hdd init</code></pre>
+            <p class="text-muted">Lệnh này sẽ tự động tạo một file cấu hình <code>git2hdd.config.json</code> bên trong thư mục dự án của bạn.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <span class="step-number">3</span>
+          <div class="step-content">
+            <h3>Mở giao diện quản lý trên web</h3>
+            <p>Nhập lệnh khởi chạy server giao diện:</p>
+            <pre><code>git2hdd gui</code></pre>
+            <p>Hệ thống sẽ **tự động mở một trang web** trên trình duyệt của bạn (tại địa chỉ <code>http://localhost:3000</code>).</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <span class="step-number">4</span>
+          <div class="step-content">
+            <h3>Cấu hình các ổ đĩa HDD dự phòng</h3>
+            <p>Trên trang web vừa mở ra:</p>
+            <ul>
+              <li>Nhấp vào tab <strong>Cấu hình dự án</strong> ở thanh menu bên trái.</li>
+              <li>Tại mục "Danh sách HDD backup", nhấn nút <strong>+ Thêm HDD Backup</strong>.</li>
+              <li>Điền đường dẫn đến thư mục backup trên ổ HDD của bạn (Ví dụ: <code>E:\backup\project.git</code>).</li>
+              <li>Bạn có thể thêm nhiều ổ đĩa đích tùy ý (lên tới 10 ổ đĩa).</li>
+              <li>Nhấn <strong>Lưu cấu hình</strong> ở góc dưới. Giao diện web sẽ tự động chuẩn bị các ổ cứng này giúp bạn.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <span class="step-number">5</span>
+          <div class="step-content">
+            <h3>Thực hiện backup hàng ngày</h3>
+            <p>Mỗi khi làm việc xong cuối ngày và muốn backup:</p>
+            <ul>
+              <li>Vào tab <strong>Chạy Backup / Mirror</strong>.</li>
+              <li>Nhập mô tả ngắn gọn cho bản backup (Ví dụ: <code>hoàn thành nút thanh toán</code>). Nếu để trống, hệ thống sẽ tự đặt tên bằng ngày giờ hiện tại.</li>
+              <li>Nhấn nút <strong>Bắt đầu Git Backup</strong>.</li>
+              <li>Bạn sẽ thấy toàn bộ tiến trình nén và copy dữ liệu chạy trực tiếp trên khung màn hình Terminal màu đen theo thời gian thực.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="info-box success">
+        <strong>🎉 Chúc mừng bạn!</strong>
+        Từ giờ, mỗi khi cần backup, bạn chỉ cần mở thư mục dự án, chạy lệnh <code>git2hdd gui</code> và nhấn nút **Backup** trên web là xong.
+      </div>
+    </section>
+
+    <!-- SECTION 5: CÂU HỎI THƯỜNG GẶP -->
+    <section>
+      <h2><span class="icon">❓</span> Các lỗi thường gặp và cách xử lý</h2>
+      
+      <ul>
+        <li>
+          <strong>Lỗi: "npm" hoặc "git2hdd" command not found</strong>
+          <p class="text-muted">Lỗi này do Windows chưa nhận diện được phần mềm vừa cài. Hãy tắt cửa sổ Command Prompt đi, mở lại cửa sổ mới hoặc khởi động lại máy tính.</p>
+        </li>
+        <li>
+          <strong>Lỗi: Backup thất bại ở một ổ đĩa</strong>
+          <p class="text-muted">Hãy kiểm tra xem ổ HDD đó có đang được cắm vào máy tính hay không, hoặc ký hiệu ổ đĩa (Ví dụ: ổ <code>E:\</code>, <code>F:\</code>) có bị thay đổi không. Các ổ đĩa khác vẫn sẽ được backup bình thường.</p>
+        </li>
+        <li>
+          <strong>Muốn tắt giao diện web thì làm thế nào?</strong>
+          <p class="text-muted">Quay lại cửa sổ Command Prompt đen và nhấn tổ hợp phím <code>Ctrl + C</code>, sau đó gõ <code>Y</code> và ấn <code>Enter</code> để tắt server.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>💾 Tài liệu hướng dẫn sử dụng Git2HDD v1.0.0 — Dành cho mọi người dùng.</p>
+      <p style="margin-top: 8px;">Bản quyền thuộc về Git2HDD Contributors. Giấy phép sử dụng MIT.</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>
